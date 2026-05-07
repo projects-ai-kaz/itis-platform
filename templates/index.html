@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ITIS Platform — AI Impact Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="brand-icon">AI</div>
+    <div class="brand-name">ITIS <em>Platform</em></div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-page="p1" onclick="switchPage('p1',this)">
+      <span class="tab-n">1</span> ITIS-калькулятор
+    </button>
+    <button class="nav-tab" data-page="p2" onclick="switchPage('p2',this)">
+      <span class="tab-n">2</span> БАК-матрица
+    </button>
+    <button class="nav-tab" data-page="p3" onclick="switchPage('p3',this)">
+      <span class="tab-n">3</span> ML-предсказатель
+    </button>
+  </div>
+  <div class="nav-r">
+    <span class="ver">v2.0 · Байтукенов Б.А.</span>
+    <button class="btn-exp" onclick="doExport()">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M6.5 1v7M4 6l2.5 2.5L9 6M1 10v.5A1.5 1.5 0 002.5 12h8A1.5 1.5 0 0012 10.5V10"/>
+      </svg>
+      Excel
+    </button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════
+     P1 — ITIS CALCULATOR
+════════════════════════════════════════ -->
+<div class="page active" id="p1">
+<div class="two-col">
+<div class="sidebar">
+  <div>
+    <div class="sec-ttl">Проект</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.4rem">
+      <div class="fld"><label>Компания</label><input class="inp" id="p1-company" value="AI Pradavan"/></div>
+      <div class="fld"><label>AI-решение</label><input class="inp" id="p1-solution" value="AI Pradavan Platform"/></div>
+      <div class="fld"><label>Аналитик</label><input class="inp" id="p1-analyst" value="Байтукенов Б.А."/></div>
+      <div class="fld"><label>Дата</label><input class="inp" id="p1-date" type="date"/></div>
+    </div>
+  </div>
+  <div>
+    <div class="sec-ttl">Модули AI-решения</div>
+    <div id="mods-container" style="margin-top:.4rem"></div>
+    <button class="add-mod" onclick="addMod()">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5.5 1v9M1 5.5h9"/></svg>
+      Добавить модуль
+    </button>
+  </div>
+  <div>
+    <div class="sec-ttl">Статус весов</div>
+    <div id="w-status" class="wstat w-warn" style="margin-top:.4rem">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="5"/><path d="M6.5 4.5v2.5M6.5 8.5h.01"/></svg>
+      <span id="w-txt">...</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="gauge-wrap">
+      <svg viewBox="0 0 148 148" width="148" height="148">
+        <circle cx="74" cy="74" r="57" fill="none" stroke="#e5e7eb" stroke-width="9"
+          stroke-dasharray="226 290" stroke-linecap="round" transform="rotate(-210 74 74)"/>
+        <circle id="g-arc" cx="74" cy="74" r="57" fill="none" stroke="#00e5b4" stroke-width="9"
+          stroke-dasharray="0 290" stroke-linecap="round" transform="rotate(-210 74 74)"
+          style="transition:stroke-dasharray .6s cubic-bezier(.4,0,.2,1),stroke .4s"/>
+      </svg>
+      <div class="gauge-center">
+        <div class="gauge-num" id="g-num" style="color:var(--a)">—</div>
+        <div class="gauge-sub">ITIS</div>
+      </div>
+    </div>
+    <div class="score-info">
+      <div class="score-ttl">AI Impact Score</div>
+      <div class="cls-badge" id="cls-badge"><span class="cls-dot" id="cls-dot"></span><span id="cls-lbl">Вычисляется…</span></div>
+      <div class="cls-desc" id="cls-desc">Настройте параметры модулей.</div>
+      <div class="stats3">
+        <div class="sbox"><div class="sbox-l">Модулей</div><div class="sbox-v" id="s-mods">—</div></div>
+        <div class="sbox"><div class="sbox-l">Лучший ITISᵢ</div><div class="sbox-v" id="s-best">—</div></div>
+        <div class="sbox"><div class="sbox-l">Слабый ITISᵢ</div><div class="sbox-v" id="s-worst">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="cg">
+    <div class="cc">
+      <div class="ct">ITISᵢ по модулям</div>
+      <div class="legend" id="bar-leg"></div>
+      <div style="position:relative;width:100%" id="bar-wrap"><canvas id="bar-c" role="img" aria-label="Гистограмма ITISᵢ"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="ct">Профиль E·C·M·W</div>
+      <div style="position:relative;width:100%;height:195px"><canvas id="radar-c" role="img" aria-label="Радар параметров"></canvas></div>
+    </div>
+    <div class="cc full">
+      <div class="ct">Вклад модулей в ITIS</div>
+      <div class="legend" id="dnt-leg"></div>
+      <div style="display:grid;grid-template-columns:175px 1fr;gap:1.1rem;align-items:center">
+        <div style="position:relative;width:175px;height:175px"><canvas id="dnt-c" role="img" aria-label="Вклад модулей"></canvas></div>
+        <div id="dnt-det" style="display:flex;flex-direction:column;gap:7px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formula + Scale -->
+  <div class="cg">
+    <div class="cc"><div class="ct">Формула ITIS</div>
+      <div class="formula">
+        <div style="margin-bottom:5px">ITISᵢ = ∛(E × C × M)</div>
+        <div>ITIS = Σ(Wᵢ / ΣW × ITISᵢ)</div>
+        <div class="cmt" style="margin-top:10px">E — бизнес-эффект [0,1]<br>W — стратегический вес<br>C — покрытие целей [0,1]<br>M — зрелость реализации [0,1]</div>
+      </div>
+    </div>
+    <div class="cc"><div class="ct">Шкала интерпретации</div>
+      <table class="stbl">
+        <thead><tr><th>ITIS</th><th>Класс</th><th>Действие</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill" style="background:#fee2e2;color:#991b1b">0.00–0.44</span></td><td style="color:#ef4444;font-weight:600">Низкая</td><td style="color:var(--t3);font-size:11px">Пересмотр стратегии</td></tr>
+          <tr><td><span class="pill" style="background:#fef3c7;color:#92400e">0.45–0.69</span></td><td style="color:#f59e0b;font-weight:600">Средняя</td><td style="color:var(--t3);font-size:11px">Доработка модулей</td></tr>
+          <tr><td><span class="pill" style="background:#d1fae5;color:#065f46">0.70–1.00</span></td><td style="color:#00e5b4;font-weight:600">Высокая</td><td style="color:var(--t3);font-size:11px">Масштабирование</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════
+     P2 — BAK MATRIX
+════════════════════════════════════════ -->
+<div class="page" id="p2">
+<div class="main" style="padding:1.5rem">
+  <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:20px;padding:1.1rem">
+    <div style="font-family:var(--f);font-size:15px;font-weight:700;margin-bottom:.2rem">БАК — Матрица покрытия</div>
+    <div style="font-size:12px;color:var(--t2)">Свяжите бизнес-цели с AI-модулями. Система автоматически рассчитает рекомендованные веса W.</div>
+  </div>
+
+  <div class="bak-cols">
+    <div class="list-card">
+      <div class="ct">Бизнес-цели</div>
+      <div id="goals-list"></div>
+      <div class="add-row">
+        <input class="inp inp-sm" id="goal-inp" placeholder="Новая цель…" onkeydown="if(event.key==='Enter')addGoal()"/>
+        <button onclick="addGoal()">+ Добавить</button>
+      </div>
+    </div>
+    <div class="list-card">
+      <div class="ct">Функциональные модули</div>
+      <div id="bmod-list"></div>
+      <div class="add-row">
+        <input class="inp inp-sm" id="bmod-inp" placeholder="Новый модуль…" onkeydown="if(event.key==='Enter')addBakMod()"/>
+        <button onclick="addBakMod()">+ Добавить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-wrap">
+    <div class="ct" style="margin-bottom:.65rem">Матрица покрытия «Цель × Модуль»</div>
+    <div style="overflow-x:auto"><table class="mx-tbl" id="mx-tbl"></table></div>
+    <div style="margin-top:.6rem;font-size:11px;color:var(--t3)">Кликните ячейку — отметьте покрытие целей модулем.</div>
+  </div>
+
+  <div class="ws-card">
+    <div class="ct" style="margin-bottom:.65rem">Рекомендованные веса W</div>
+    <div id="ws-list"></div>
+    <div style="margin-top:.75rem;display:flex;gap:8px;flex-wrap:wrap">
+      <button style="padding:6px 14px;border-radius:8px;background:#059669;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:500" onclick="applyWeightsToCalc()">→ Применить в Калькулятор</button>
+      <button style="padding:6px 14px;border-radius:8px;background:var(--bg4);border:1px solid var(--b2);color:var(--t);cursor:pointer;font-size:12px" onclick="exportBAK().then(()=>toast('✓ Excel сохранён'))">Экспорт матрицы</button>
+    </div>
+  </div>
+
+  <div class="cc">
+    <div class="ct">KPI по бизнес-целям</div>
+    <table class="kpi-tbl">
+      <thead><tr><th>Бизнес-цель</th><th>KPI</th><th>Покрытие модулями</th><th>Вес W</th></tr></thead>
+      <tbody id="kpi-tbody"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════
+     P3 — ML PREDICTOR
+════════════════════════════════════════ -->
+<div class="page" id="p3">
+<div class="main">
+  <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:20px;padding:1.1rem">
+    <div style="font-family:var(--f);font-size:15px;font-weight:700;margin-bottom:.2rem">ML-предсказатель эффекта AI-внедрения</div>
+    <div style="font-size:12px;color:var(--t2);max-width:560px">Имитирует Random Forest на основе 7 характеристик. Показывает вероятности классов, Feature Importance и рекомендации.</div>
+  </div>
+
+  <div class="ml-layout">
+    <div class="ml-form">
+      <div class="ml-ttl">Характеристики проекта</div>
+
+      <div class="fg"><label>Отраслевой коэффициент</label>
+        <select class="inp" id="ml-industry">
+          <option value="0.90">E-commerce / Ритейл</option>
+          <option value="0.85">Финансы / Банкинг</option>
+          <option value="0.80">Телекоммуникации</option>
+          <option value="0.75">Производство</option>
+          <option value="0.70">Логистика</option>
+          <option value="0.65">Здравоохранение</option>
+          <option value="0.55">Госсектор</option>
+        </select>
+      </div>
+
+      <div class="fg"><label>Размер компании</label>
+        <select class="inp" id="ml-size">
+          <option value="0.50">Малый (&lt;50)</option>
+          <option value="0.70">Средний (50–500)</option>
+          <option value="0.85" selected>Крупный (500–5000)</option>
+          <option value="0.95">Корпорация (&gt;5000)</option>
+        </select>
+      </div>
+
+      {% for fid, flabel, fval, fcls in [
+        ('ml-digit',   'Уровень цифровизации',        '0.75', 'ca'),
+        ('ml-data',    'Зрелость данных',              '0.70', 'ca'),
+        ('ml-mgmt',    'Поддержка руководства',        '0.80', 'cb'),
+        ('ml-clarity', 'Чёткость бизнес-целей',        '0.85', 'cc'),
+        ('ml-budget',  'Бюджет проекта (норм.)',        '0.65', 'cd'),
+      ] %}
+      <div class="fg">
+        <label>{{ flabel }}: <span id="{{ fid }}-v" style="color:var(--a);font-weight:600">{{ fval }}</span></label>
+        <input type="range" id="{{ fid }}" class="{{ fcls }}" min="0" max="1" step="0.05" value="{{ fval }}"
+          oninput="document.getElementById('{{ fid }}-v').textContent=parseFloat(this.value).toFixed(2)"/>
+      </div>
+      {% endfor %}
+
+      <button class="predict-btn" onclick="runPredict()">⚡ Предсказать класс эффекта</button>
+    </div>
+
+    <div id="ml-res">
+      <div style="background:var(--bg2);border:1px solid var(--b);border-radius:20px;padding:2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.75rem;min-height:260px;color:var(--t3)">
+        <div style="font-size:30px">🤖</div>
+        <div style="font-family:var(--f);font-size:14px;font-weight:600">Заполните параметры и нажмите «Предсказать»</div>
+        <div style="font-size:12px">Модель покажет вероятности классов, важность признаков и рекомендации</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/itis.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bak.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ml.js') }}"></script>
+</body>
+</html>
