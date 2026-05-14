@@ -1,6 +1,6 @@
-"""app.py — ITIS Platform Flask application."""
+"""app.py — ITIS Platform Flask application (с поддержкой multi-company)."""
+
 from flask import Flask, render_template
-from routes import itis_bp, bak_bp, ml_bp, export_bp
 
 
 def create_app(testing: bool = False) -> Flask:
@@ -8,8 +8,16 @@ def create_app(testing: bool = False) -> Flask:
     app.config["TESTING"] = testing
     app.config["JSON_SORT_KEYS"] = False
 
+    # ── Существующие blueprints ────────────────────────────────────────────
+    from routes import itis_bp, bak_bp, ml_bp, export_bp
     for bp in (itis_bp, bak_bp, ml_bp, export_bp):
         app.register_blueprint(bp)
+
+    # ── Новые blueprints для multi-company ────────────────────────────────
+    from routes.api_companies import companies_bp
+    from routes.export_companies import export_companies_bp
+    app.register_blueprint(companies_bp)
+    app.register_blueprint(export_companies_bp)
 
     @app.route("/")
     def index():

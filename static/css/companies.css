@@ -1,0 +1,278 @@
+/* static/css/companies.css — стили для вкладки «Компании» */
+
+/* ── Alerts ─────────────────────────────────────────────────────────────── */
+.co-alert {
+  display: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: 8px 0;
+  font-size: 0.9rem;
+  white-space: pre-line;
+}
+.co-alert-error   { background: #FEE2E2; color: #7F1D1D; border: 1px solid #FCA5A5; }
+.co-alert-success { background: #D1FAE5; color: #064E3B; border: 1px solid #6EE7B7; }
+
+/* ── Section cards ───────────────────────────────────────────────────────── */
+.co-section {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.co-section h3 {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  color: #1E3A5F;
+  font-weight: 600;
+}
+
+/* ── Upload block ────────────────────────────────────────────────────────── */
+.co-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.co-upload-row input[type="file"] {
+  flex: 1;
+  min-width: 200px;
+  font-size: 0.9rem;
+}
+.co-template-link {
+  font-size: 0.85rem;
+  color: #2563EB;
+  text-decoration: none;
+}
+.co-template-link:hover { text-decoration: underline; }
+
+/* ── Actions toolbar ─────────────────────────────────────────────────────── */
+.co-toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+/* ── Companies table ─────────────────────────────────────────────────────── */
+.co-table-wrapper { overflow-x: auto; }
+
+.co-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.co-table thead th {
+  background: #1A3A5C;
+  color: #fff;
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.co-table tbody tr:nth-child(even) { background: #F0F5FB; }
+.co-table tbody tr:hover { background: #E8F0FE; }
+.co-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #E2E8F0;
+  vertical-align: middle;
+}
+.co-empty {
+  text-align: center;
+  color: #94A3B8;
+  padding: 32px !important;
+  font-size: 0.95rem;
+}
+
+/* Score colors */
+.score-high { color: #059669; font-weight: 700; }
+.score-mid  { color: #D97706; font-weight: 700; }
+.score-low  { color: #DC2626; font-weight: 700; }
+
+/* Icon buttons */
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.btn-icon:hover { background: #E2E8F0; }
+
+/* ── Comparison result ───────────────────────────────────────────────────── */
+#co-comparison-result {
+  display: none;
+}
+
+.co-compare-title {
+  font-size: 1rem;
+  color: #1E3A5F;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+/* Bar chart */
+.co-bar-chart { margin-bottom: 20px; }
+.co-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.co-bar-label {
+  width: 200px;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  color: #334155;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.co-bar-track {
+  flex: 1;
+  background: #E2E8F0;
+  border-radius: 4px;
+  height: 18px;
+  overflow: hidden;
+}
+.co-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+.bar-high { background: linear-gradient(90deg, #059669, #34D399); }
+.bar-mid  { background: linear-gradient(90deg, #D97706, #FCD34D); }
+.bar-low  { background: linear-gradient(90deg, #DC2626, #FCA5A5); }
+
+.co-bar-value {
+  width: 50px;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* Comparison summary table */
+.co-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.co-compare-table th {
+  background: #1A3A5C;
+  color: #fff;
+  padding: 8px 10px;
+  text-align: left;
+}
+.co-compare-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #E2E8F0;
+}
+.co-compare-table tr:nth-child(even) td { background: #F0F5FB; }
+
+/* ── Manual entry form ───────────────────────────────────────────────────── */
+#co-form-panel {
+  display: none;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+#co-form-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1E3A5F;
+  margin-bottom: 14px;
+}
+.co-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  margin-bottom: 16px;
+}
+.co-form-grid label { font-size: 0.83rem; color: #475569; margin-bottom: 3px; display: block; }
+.co-form-grid input,
+.co-form-grid textarea {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+.co-form-grid textarea { resize: vertical; min-height: 60px; }
+
+/* Modules container */
+.co-modules-header {
+  font-size: 0.83rem;
+  color: #475569;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.co-module-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.co-mod-name { flex: 2; min-width: 120px; }
+.co-mod-E, .co-mod-W, .co-mod-C, .co-mod-M {
+  width: 64px;
+  flex-shrink: 0;
+  padding: 7px 6px;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  text-align: center;
+}
+.co-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn-primary {
+  background: #1A3A5C;
+  color: #fff;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: #244E7A; }
+.btn-secondary {
+  background: #E2E8F0;
+  color: #334155;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-secondary:hover { background: #CBD5E1; }
+.btn-outline {
+  background: transparent;
+  color: #1A3A5C;
+  border: 1.5px solid #1A3A5C;
+  padding: 8px 16px;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-outline:hover { background: #1A3A5C; color: #fff; }
+
+@media (max-width: 640px) {
+  .co-form-grid { grid-template-columns: 1fr; }
+  .co-bar-label { width: 120px; }
+}
